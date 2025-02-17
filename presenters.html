@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      button {
+        padding: 10px 20px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      .result {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>챕터별 발표자 할당</h1>
+      <label for="presenters">발표자를 입력하세요 (쉼표로 구분):</label>
+      <input type="text" id="presenters" placeholder="예: Alice, Bob, Charlie"/>
+      
+      <label for="chapters">챕터들를 입력하세요 (쉼표로 구분):</label>
+      <input type="text" id="chapters" placeholder="예: 챕1, 챕2, 챕3"/>
+
+      <button onclick="assignPresenters()">할당하기</button>
+      <div class="result" id="result">
+        <!-- result will be showed here -->
+      </div>
+    </div>
+    <script>
+      function assignPresenters() {
+        const presentersInput = document.getElementById('presenters').value.trim();
+        const chaptersInput = document.getElementById('chapters').value.trim();
+        const presenters = presentersInput.split(',').map(s => s.trim()).filter(s => s.length > 0);
+        const chapters = chaptersInput.split(',').map(s => s.trim()).filter(s => s.length > 0);
+        const resultDiv = document.getElementById('result');
+        if (presenters.length === 0) {
+          resultDiv.innerHTML = '<p style="color: red;"> 오류: 발표자 리스트가 비어 있습니다.</p>';
+        }
+        if (chapters.length === 0) {
+          resultDiv.innerHTML = '<p style="color: red;"> 오류: 할당할 챕터가 비어 있습니다.</p>';
+        }
+        suffleArray(presenters);
+        suffleArray(chapters);
+        const assignments = {};
+        for (let i = 0; i < chapters.length; i++) {
+          const presenterIndex = i % presenters.length;
+          assignments[chapters[i]] = presenters[presentersIndex];
+        }
+        let resultHTML = '<h2>챕터별 발표자 할당 결과</h2>';
+        for (const [chapter, presenter] of Object.entries(assignments)) {
+          resultHTML += `<p>${chapter} -> ${presenter}</p>`;
+        }
+        resultDiv.innerHTML = resultHTML;
+      }
+
+      function suffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() *  (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+      }
+    </script>
+  </body>
+</html>
