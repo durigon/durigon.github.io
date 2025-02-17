@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>챕터별 발표자 할당 - React</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+  </head>
+  <body>
+    <div id="root"></div>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js" > </script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" > </script>
+    <script src="https://unpkg.com/@mui/material@5.13.7/umd/material-ui.development.js" > </script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js" > </script>
+    
+    <script type="text/babel">
+      const {
+        Container,
+        Card,
+        CardContent,
+        TextField,
+        Button,
+        Alert,
+        List,
+        ListItem,
+        ListItemText,
+        Typography,
+        Box
+      } = MaterialUI;
+      function App() {
+        const [presentersInput, setPresentersInput] = React.useState('');
+        const [chaptersInput, setChaptersInput] = React.useState('');
+        const [assignments, setAssignments] = React.useState({});
+        const [errorMessage, setChaptersInput] = React.useState('');
+
+        const shuffleArray = (array) => {
+          for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() *  (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+          }
+        };
+
+        const assignPresenters = (e) => {
+          e.preventDefault();
+          setErrorMessage('');
+          let presentersInputTrimmed = presentersInput.trim();
+          let chaptersInputTrimmed = chaptersInput.trim();
+          const presenters = presentersInputTrimmed.split(',').map(s => s.trim()).filter(s => s.length > 0);
+          const chapters = chaptersInputTrimmed.split(',').map(s => s.trim()).filter(s => s.length > 0);
+          if (presenters.length === 0) {
+            setErrorMessage('오류: 발표자 리스트가 비어 있습니다.');
+            setAssignments({});
+            return;
+          }
+          if (chapters.length === 0) {
+            setErrorMessage('오류: 할당할 챕터가 비어 있습니다.');
+            setAssignments({});
+            return;
+          }
+          const originalChapters = [...chapters];
+          suffleArray(presenters);
+          suffleArray(chapters);
+          const assignmentResult = {};
+          for (let i = 0; i < chapters.length; i++) {
+            const presentersIndex = i % presenters.length;
+            assignmentResult[chapters[i]] = presenters[presentersIndex];
+          }
+          const orderedAssignments = {};
+          originalChapters.forEach(chapter => {
+            if (assignments[chapter]) {
+              orderedAssignments[chapter] = assignmentResult[chapter];
+            }
+          });
+          setAssignments(orderedAssignments);
+          return (
+            <Container maxWidth="md" sx={{ mt:5  }}>
+              <Card>
+                <Typography variant="h5" gutterBottom>챕터별 발표자 할당
+                </Typography>
+                <Box component="form" onSubmit={assignPresenters}
+                  sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+                  >
+                  <TextField label="빨표자를 입력하세요 (쉼표로 구분, 기본값: Alice, Bob)"
+                    placeholder="예: Alice, Bob"
+                    value={presentersInput}
+                    onChange={(e) =>
+                      setPresentersInput(e.target.value)}
+                    fullWidth />
+                  <TextField label="챕터들을 입력하세요 (쉼표로 구분)"
+                    placeholder="예: 챕1, 챕2, 챕3"
+                    value={chaptersInput}
+                    onChange={(e) =>
+                      setChaptersInput(e.target.value)}
+                    fullWidth />
+                  <Button variant="contained" color="primary" type="submit">
+                    할당하기
+                  </Button>
+                </Box>
+                { errorMessage && (
+                  <Alert severity="error" sx={{ mt: 2 }}>
+                    { errorMessage }
+                  </Alert>
+                  )}
+                { Object.keys(assignments).length > 0 && (
+                  <Box sx={{ mt: 5 }}>
+                    <Typography variant="h6" gutterBottom>
+                      챕터별 발표자 할당 결과:
+                    </Typography>
+                    <List>
+                      {Object.entries(assignments).map(([chapter, presenter])=> (
+                        <ListItem key={chapter}>
+                          <ListItemText primary={`${chapter} -> ${presenter}`} />
+                        </ListItem>
+                        ))}
+                    </List>
+                  </Box>
+                  )}
+                </CardContent>
+              </Card>
+            </Container>
+          );
+        }
+        const root = RactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+  </body>
+</html>
