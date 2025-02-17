@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>챕터별 발표자 할당 - Vue</title>
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.6.12/dist/vuetify.min.css" rel="stylesheet"\>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900" rel="stylesheet"\>
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/meterialdesignicons.min.css" rel="stylesheet"\>
+  </head>
+  <body>
+    <div id="app">
+      <v-app>
+        <v-container class="mt-5">
+          <v-row justify="center">
+            <v-col cols="12" md="8">
+              <v-card>
+                <v-card-title class="headline">챕터별 발표자 할당</v-card-title>
+                <v-card-text>
+                  <v-form @submit.prevent="assignPresenters">
+                    <v-text-field v-model="presentersInput" label="발표자를 입력하세요 (쉼표로 구분, 기본값: Alice, Bob):" placeholder="예: Alice, Bob"></v-text-field>
+                    <v-text-field v-model="chaptersInput" label="챕터들을 입력하세요 (쉼표로 구분):" placeholder="예: Alice, Bob"></v-text-field>
+                    <v-btn color="primary" type="submit">할당하기</v-btn>
+                  </v-form>
+                  <v-alert v-if="errorMessage" type="error" class="mt-3">
+                    {{ errorMessage }}
+                  </v-alert>
+                  <div v-if="Object.keys(assignments).length" class="mt-5">
+                    <h2>챕터별 발표자 할당 결과:</h2>
+                    <v-list dense>
+                      <v-list-item v-for="(presenter, chapter) in assignments" :key="chapter">
+                        <v-list-item-content>
+                          <v-list-item-title {{ chapter }} -> {{ presenter }} </v-list-item-title>
+                        </v-list-item-content>
+                      </v-list-item>
+                    </v-list>
+                  </div>
+                </v-card-text>
+              </v-card>
+            </v-col>
+        </v-container>
+      </v-app>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js" \>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.6.12/dist/vuetify.js"\>
+    
+    <script>
+      new Vue({
+        el: '#app',
+        vuetify: new Vuetify(),
+        data: () => ({
+          presentersInput: '',
+          chaptersInput: '',
+          assignments: {},
+          errorMessage: ''
+        }),
+        methods: {
+          assignPresenters() {
+            this.errorMessage = '';
+            const presentersInput = this.presentersInput.trim();
+            const chaptersInput = this.chaptersInput.trim();
+            const presenters = presentersInput.split(',').map(s => s.trim()).filter(s => s.length > 0);
+            const chapters = chaptersInput.split(',').map(s => s.trim()).filter(s => s.length > 0);
+            if (presenters.length === 0) {
+              this.errorMessage = '오류: 발표자 리스트가 비어 있습니다.';
+              return;
+            }
+            if (chapters.length === 0) {
+              this.errorMessage = '오류: 할당할 챕터가 비어 있습니다.';
+              return;
+            }
+            const originalChapters = [...chapters];
+            this.suffleArray(presenters);
+            this.suffleArray(chapters);
+            const assignments = {};
+            for (let i = 0; i < chapters.length; i++) {
+              const presentersIndex = i % presenters.length;
+              assignments[chapters[i]] = presenters[presentersIndex];
+            }
+            const orderedAssignments = {};
+            originalChapters.forEach(chapter => {
+              if (assignments[chapter]) {
+                orderedAssignments[chapter] = assignments[chapter];
+              }
+            });
+            this.assignments = orderedAssignments;
+          },
+          suffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+              const j = Math.floor(Math.random() *  (i + 1));
+              [array[i], array[j]] = [array[j], array[i]];
+            }
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
