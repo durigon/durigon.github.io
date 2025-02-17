@@ -74,57 +74,58 @@
             }
           });
           setAssignments(orderedAssignments);
-          return (
-            <Container maxWidth="md" sx={{ mt:5  }}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h5" gutterBottom>챕터별 발표자 할당
-                  </Typography>
-                  <Box component="form" onSubmit={assignPresenters}
-                    sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
-                    >
-                    <TextField label="빨표자를 입력하세요 (쉼표로 구분, 기본값: Alice, Bob)"
-                      placeholder="예: Alice, Bob"
-                      value={presentersInput}
-                      onChange={(e) =>
-                        setPresentersInput(e.target.value)}
-                      fullWidth />
-                    <TextField label="챕터들을 입력하세요 (쉼표로 구분)"
-                      placeholder="예: 챕1, 챕2, 챕3"
-                      value={chaptersInput}
-                      onChange={(e) =>
-                        setChaptersInput(e.target.value)}
-                      fullWidth />
-                    <Button variant="contained" color="primary" type="submit">
-                      할당하기
-                    </Button>
+        };
+        return (
+          <Container maxWidth="md" sx={{ mt:5  }}>
+            <Card>
+              <CardContent>
+                <Typography variant="h5" gutterBottom>챕터별 발표자 할당
+                </Typography>
+                <Box component="form" onSubmit={assignPresenters}
+                  sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+                  >
+                  <TextField label="빨표자를 입력하세요 (쉼표로 구분, 기본값: Alice, Bob)"
+                    placeholder="예: Alice, Bob"
+                    value={presentersInput}
+                    onChange={(e) =>
+                      setPresentersInput(e.target.value)}
+                    fullWidth />
+                  <TextField label="챕터들을 입력하세요 (쉼표로 구분)"
+                    placeholder="예: 챕1, 챕2, 챕3"
+                    value={chaptersInput}
+                    onChange={(e) =>
+                      setChaptersInput(e.target.value)}
+                    fullWidth />
+                  <Button variant="contained" color="primary" type="submit">
+                    할당하기
+                  </Button>
+                </Box>
+                { errorMessage && (
+                  <Alert severity="error" sx={{ mt: 2 }}>
+                    { errorMessage }
+                  </Alert>
+                  )}
+                { Object.keys(assignments).length > 0 && (
+                  <Box sx={{ mt: 5 }}>
+                    <Typography variant="h6" gutterBottom>
+                      챕터별 발표자 할당 결과:
+                    </Typography>
+                    <List>
+                      {Object.entries(assignments).map(([chapter, presenter])=> (
+                        <ListItem key={chapter}>
+                          <ListItemText primary={`${chapter} -> ${presenter}`} />
+                        </ListItem>
+                        ))}
+                    </List>
                   </Box>
-                  { errorMessage && (
-                    <Alert severity="error" sx={{ mt: 2 }}>
-                      { errorMessage }
-                    </Alert>
-                    )}
-                  { Object.keys(assignments).length > 0 && (
-                    <Box sx={{ mt: 5 }}>
-                      <Typography variant="h6" gutterBottom>
-                        챕터별 발표자 할당 결과:
-                      </Typography>
-                      <List>
-                        {Object.entries(assignments).map(([chapter, presenter])=> (
-                          <ListItem key={chapter}>
-                            <ListItemText primary={`${chapter} -> ${presenter}`} />
-                          </ListItem>
-                          ))}
-                      </List>
-                    </Box>
-                    )}
-                </CardContent>
-              </Card>
-            </Container>
-          );
-        }
-        const root = RactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+                  )}
+              </CardContent>
+            </Card>
+          </Container>
+        );
+      }
+      const root = RactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
     </script>
   </body>
 </html>
