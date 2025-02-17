@@ -18,8 +18,10 @@
                 <v-card-title class="headline">챕터별 발표자 할당</v-card-title>
                 <v-card-text>
                   <v-form @submit.prevent="assignPresenters">
-                    <v-text-field v-model="presentersInput" label="발표자를 입력하세요 (쉼표로 구분, 기본값: Alice, Bob):" placeholder="예: Alice, Bob"></v-text-field>
-                    <v-text-field v-model="chaptersInput" label="챕터들을 입력하세요 (쉼표로 구분):" placeholder="예: Alice, Bob"></v-text-field>
+                    <v-text-field v-model="presentersInput" label="발표자를 입력하세요 (쉼표로 구분, 기본값: Alice, Bob):" placeholder="예: Alice, Bob">
+                      Alice, Bob
+                    </v-text-field>
+                    <v-text-field v-model="chaptersInput" label="챕터들을 입력하세요 (쉼표로 구분):" placeholder="예: c1, c2, c3, c4"></v-text-field>
                     <v-btn color="primary" type="submit">할당하기</v-btn>
                   </v-form>
                   <v-alert v-if="errorMessage" type="error" class="mt-3">
