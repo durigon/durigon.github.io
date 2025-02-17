@@ -42,7 +42,7 @@
     <div class="container">
       <h1>챕터별 발표자 할당</h1>
       <label for="presenters">발표자를 입력하세요 (쉼표로 구분):</label>
-      <input type="text" id="presenters" placeholder="예: Alice, Bob, Charlie"/>
+      <input type="text" id="presenters" placeholder="예: Alice, Bob, Charlie" value="Alice, Bob"/>
       
       <label for="chapters">챕터들를 입력하세요 (쉼표로 구분):</label>
       <input type="text" id="chapters" placeholder="예: 챕1, 챕2, 챕3"/>
@@ -73,8 +73,8 @@
           assignments[chapters[i]] = presenters[presentersIndex];
         }
         let resultHTML = '<h2>챕터별 발표자 할당 결과</h2>';
-        for (const [chapter, presenter] of Object.entries(assignments)) {
-          resultHTML += `<p>${chapter} -> ${presenter}</p>`;
+        for (const chapter of chapters) {
+          resultHTML += `<p>${chapter} -> ${assignments[chapter]}</p>`;
         }
         resultDiv.innerHTML = resultHTML;
       }
