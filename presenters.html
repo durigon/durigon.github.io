@@ -69,7 +69,7 @@
         suffleArray(chapters);
         const assignments = {};
         for (let i = 0; i < chapters.length; i++) {
-          const presenterIndex = i % presenters.length;
+          const presentersIndex = i % presenters.length;
           assignments[chapters[i]] = presenters[presentersIndex];
         }
         let resultHTML = '<h2>챕터별 발표자 할당 결과</h2>';
