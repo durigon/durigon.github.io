@@ -65,6 +65,7 @@
         if (chapters.length === 0) {
           resultDiv.innerHTML = '<p style="color: red;"> 오류: 할당할 챕터가 비어 있습니다.</p>';
         }
+        const oChapters = chapters.slice();
         suffleArray(presenters);
         suffleArray(chapters);
         const assignments = {};
@@ -73,7 +74,7 @@
           assignments[chapters[i]] = presenters[presentersIndex];
         }
         let resultHTML = '<h2>챕터별 발표자 할당 결과</h2>';
-        for (const chapter of chapters) {
+        for (const chapter of oChapters) {
           resultHTML += `<p>${chapter} -> ${assignments[chapter]}</p>`;
         }
         resultDiv.innerHTML = resultHTML;
