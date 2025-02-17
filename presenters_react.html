@@ -61,6 +61,8 @@
             return;
           }
           const originalChapters = [...chapters];
+          console.log("chapters 할당 결과:", chapters);
+          console.log("originalChapters 할당 결과:", originalChapters);
           suffleArray(presenters);
           suffleArray(chapters);
           const assignmentResult = {};
@@ -70,7 +72,7 @@
           }
           const orderedAssignments = {};
           originalChapters.forEach(chapter => {
-            if (assignments[chapter]) {
+            if (assignmentResult[chapter]) {
               orderedAssignments[chapter] = assignmentResult[chapter];
             }
           });
