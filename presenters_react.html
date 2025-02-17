@@ -44,7 +44,6 @@
 
         const assignPresenters = (e) => {
           e.preventDefault();
-          console.log("assignPresenters 함수가 실행되었습니다.");
           setErrorMessage('');
           let presentersInputTrimmed = presentersInput.trim();
           let chaptersInputTrimmed = chaptersInput.trim();
@@ -61,8 +60,6 @@
             return;
           }
           const originalChapters = [...chapters];
-          console.log("chapters 할당 결과:", chapters);
-          console.log("originalChapters 할당 결과:", originalChapters);
           suffleArray(presenters);
           suffleArray(chapters);
           const assignmentResult = {};
@@ -76,7 +73,6 @@
               orderedAssignments[chapter] = assignmentResult[chapter];
             }
           });
-          console.log("최종 할당 결과:", orderedAssignments);
           setAssignments(orderedAssignments);
         };
         return (
