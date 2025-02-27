@@ -41,35 +41,33 @@
             [array[i], array[j]] = [array[j], array[i]];
           }
         };
-        const parseChapters(input) {
-            const result = [];
-            const parts = input.split(',').map(part => part.trim()).filter(s => s.length > 0);
         
-            parts.forEach(part => {
-                // "cX.Y~A.B" 또는 "챕터X.Y~A.B" 패턴 찾기
-                const rangeMatch = part.match(/(?:c|챕터)?(\d+)\.(\d+)~(\d+)\.(\d+)/);
-                // "cX.Y" 또는 "챕터X.Y" 단일 챕터 찾기
-                const singleMatch = part.match(/(?:c|챕터)?(\d+)\.(\d+)/);
-        
-                if (rangeMatch) {
-                    let startMajor = parseInt(rangeMatch[1], 10);
-                    let startMinor = parseInt(rangeMatch[2], 10);
-                    let endMajor = startMajor; // 범위에서 챕터 번호가 하나만 나오는 경우 처리
-                    let endMinor = parseInt(rangeMatch[4], 10);
-        
-                    for (let minor = startMinor; minor <= endMinor; minor++) {
-                        result.push(`챕터${startMajor}.${minor}`);
-                    }
-                } else if (singleMatch) {
-                    let major = parseInt(singleMatch[1], 10);
-                    let minor = parseInt(singleMatch[2], 10);
-                    result.push(`챕터${major}.${minor}`);
-                }
-            });
-        
-            return result;
-        }
-        
+        const parseChapters = (input) => {
+          const result = [];
+          const parts = input.split(',').map(part => part.trim()).filter(s => s.length > 0);
+    
+          parts.forEach(part => {
+            const rangeMatch = part.match(/(?:c|챕터)?(\d+)\.(\d+)~(\d+)\.(\d+)/);
+            const singleMatch = part.match(/(?:c|챕터)?(\d+)\.(\d+)/);
+    
+            if (rangeMatch) {
+              let startMajor = parseInt(rangeMatch[1], 10);
+              let startMinor = parseInt(rangeMatch[2], 10);
+              let endMinor = parseInt(rangeMatch[4], 10);
+    
+              for (let minor = startMinor; minor <= endMinor; minor++) {
+                result.push(`챕터${startMajor}.${minor}`);
+              }
+            } else if (singleMatch) {
+              let major = parseInt(singleMatch[1], 10);
+              let minor = parseInt(singleMatch[2], 10);
+              result.push(`챕터${major}.${minor}`);
+            }
+          });
+    
+          return result;
+        };
+
         const assignPresenters = (e) => {
           e.preventDefault();
           setErrorMessage('');
