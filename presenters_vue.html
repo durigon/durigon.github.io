@@ -69,7 +69,6 @@
           assignPresenters() {
             this.errorMessage = '';
             const presenters = this.presentersInput; // `v-select`에서 선택한 값은 배열 그대로 유지됨
-            const presenters = presentersInput.split(',').map(s => s.trim()).filter(s => s.length > 0);
             const chapters = this.parseChapters(this.chaptersInput);
             if (presenters.length === 0) {
               this.errorMessage = '오류: 발표자 리스트가 비어 있습니다.';
