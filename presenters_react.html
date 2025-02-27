@@ -110,12 +110,24 @@
                 <Box component="form" onSubmit={assignPresenters}
                   sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
                   >
-                  <TextField label="빨표자를 입력하세요 (쉼표로 구분, 기본값: 민호,이쿠맨,...)"
-                    placeholder="예: Alice, Bob"
-                    value={presentersInput}
-                    onChange={(e) =>
-                      setPresentersInput(e.target.value)}
-                    fullWidth />
+                  <Select
+                    multiple
+                    value={presentersInput.split(',')} // 문자열을 배열로 변환하여 사용
+                    onChange={(e) => setPresentersInput(e.target.value.join(','))} // 선택값을 다시 문자열로 변환
+                    renderValue={(selected) => (
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                        {selected.map((value) => (
+                          <Chip key={value} label={value} />
+                        ))}
+                      </Box>
+                    )}
+                  >
+                    {["민호", "이쿠맨", "도키", "띤자", "란초", "디제로", "너구리", "륜곰"].map((name) => (
+                      <MenuItem key={name} value={name}>
+                        {name}
+                      </MenuItem>
+                    ))}
+                  </Select>
                   <TextField label="챕터들을 입력하세요 (쉼표로 구분)"
                     placeholder="예: 챕1, 챕2, 챕3"
                     value={chaptersInput}
