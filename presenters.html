@@ -45,7 +45,7 @@
       <input type="text" id="presenters" placeholder="예: Alice, Bob, Charlie" value="민호,이쿠맨,도키,띤자,란초,디제로,너구리,륜곰"/>
       
       <label for="chapters">챕터들를 입력하세요 (쉼표로 구분):</label>
-      <input type="text" id="chapters" placeholder="예: 챕1, 챕2, 챕3"/>
+      <input type="text" id="chapters" placeholder="예: cX.Y~A.B 또는 챕터X.Y~A.B" value="챕터5.1~5.5,챕터6.1~6.4"/>
 
       <button onclick="assignPresenters()">할당하기</button>
       <div class="result" id="result">
@@ -53,11 +53,40 @@
       </div>
     </div>
     <script>
+      function parseChapters(input) {
+          const result = [];
+          const parts = input.split(',').map(part => part.trim()).filter(s => s.length > 0);
+      
+          parts.forEach(part => {
+              // "cX.Y~A.B" 또는 "챕터X.Y~A.B" 패턴 찾기
+              const rangeMatch = part.match(/(?:c|챕터)?(\d+)\.(\d+)~(\d+)\.(\d+)/);
+              // "cX.Y" 또는 "챕터X.Y" 단일 챕터 찾기
+              const singleMatch = part.match(/(?:c|챕터)?(\d+)\.(\d+)/);
+      
+              if (rangeMatch) {
+                  let startMajor = parseInt(rangeMatch[1], 10);
+                  let startMinor = parseInt(rangeMatch[2], 10);
+                  let endMajor = startMajor; // 범위에서 챕터 번호가 하나만 나오는 경우 처리
+                  let endMinor = parseInt(rangeMatch[4], 10);
+      
+                  for (let minor = startMinor; minor <= endMinor; minor++) {
+                      result.push(`챕터${startMajor}.${minor}`);
+                  }
+              } else if (singleMatch) {
+                  let major = parseInt(singleMatch[1], 10);
+                  let minor = parseInt(singleMatch[2], 10);
+                  result.push(`챕터${major}.${minor}`);
+              }
+          });
+      
+          return result;
+      }
+
       function assignPresenters() {
         const presentersInput = document.getElementById('presenters').value.trim();
-        const chaptersInput = document.getElementById('chapters').value.trim();
+        const chaptersInput = document.getElementById('chapters').value.trim();        
         const presenters = presentersInput.split(',').map(s => s.trim()).filter(s => s.length > 0);
-        const chapters = chaptersInput.split(',').map(s => s.trim()).filter(s => s.length > 0);
+        const chapters = parseChapters(chaptersInput);
         const resultDiv = document.getElementById('result');
         if (presenters.length === 0) {
           resultDiv.innerHTML = '<p style="color: red;"> 오류: 발표자 리스트가 비어 있습니다.</p>';
