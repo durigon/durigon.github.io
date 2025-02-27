@@ -18,7 +18,7 @@
                 <v-card-title class="headline">챕터별 발표자 할당</v-card-title>
                 <v-card-text>
                   <v-form @submit.prevent="assignPresenters">
-                    <v-text-field v-model="presentersInput" label="발표자를 입력하세요 (쉼표로 구분, 기본값: Alice, Bob):" placeholder="예: Alice, Bob"></v-text-field>
+                    <v-text-field v-model="presentersInput" label="발표자를 입력하세요 (쉼표로 구분, 기본값: 민호,이쿠맨,...):" placeholder="예: 민호,이쿠맨"></v-text-field>
                     <v-text-field v-model="chaptersInput" label="챕터들을 입력하세요 (쉼표로 구분):" placeholder="예: c1, c2, c3, c4"></v-text-field>
                     <v-btn color="primary" type="submit">할당하기</v-btn>
                   </v-form>
@@ -51,7 +51,7 @@
         vuetify: new Vuetify(),
         data: () => ({
           presentersInput: '민호,이쿠맨,도키,띤자,란초,디제로,너구리,륜곰',
-          chaptersInput: '',
+          chaptersInput: '챕터5.1~5.5,챕터6.1~6.4',
           assignments: {},
           errorMessage: ''
         }),
@@ -59,9 +59,8 @@
           assignPresenters() {
             this.errorMessage = '';
             const presentersInput = this.presentersInput.trim();
-            const chaptersInput = this.chaptersInput.trim();
             const presenters = presentersInput.split(',').map(s => s.trim()).filter(s => s.length > 0);
-            const chapters = chaptersInput.split(',').map(s => s.trim()).filter(s => s.length > 0);
+            const chapters = this.parseChapters(this.chaptersInput);
             if (presenters.length === 0) {
               this.errorMessage = '오류: 발표자 리스트가 비어 있습니다.';
               return;
@@ -91,6 +90,32 @@
               const j = Math.floor(Math.random() *  (i + 1));
               [array[i], array[j]] = [array[j], array[i]];
             }
+          },
+
+          parseChapters(input) {
+            const result = [];
+            const parts = input.split(',').map(part => part.trim()).filter(s => s.length > 0);
+    
+            parts.forEach(part => {
+              const rangeMatch = part.match(/(?:c|챕터)?(\d+)\.(\d+)~(\d+)\.(\d+)/);
+              const singleMatch = part.match(/(?:c|챕터)?(\d+)\.(\d+)/);
+    
+              if (rangeMatch) {
+                let startMajor = parseInt(rangeMatch[1], 10);
+                let startMinor = parseInt(rangeMatch[2], 10);
+                let endMinor = parseInt(rangeMatch[4], 10);
+    
+                for (let minor = startMinor; minor <= endMinor; minor++) {
+                  result.push(`챕터${startMajor}.${minor}`);
+                }
+              } else if (singleMatch) {
+                let major = parseInt(singleMatch[1], 10);
+                let minor = parseInt(singleMatch[2], 10);
+                result.push(`챕터${major}.${minor}`);
+              }
+            });
+    
+            return result;
           }
         }
       });
