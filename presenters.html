@@ -1,122 +1,137 @@
 <!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-      }
-      .container {
-        max-width: 600px;
-        margin: 0 auto;
-      }
-      input[type="text"] {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-      }
-      button {
-        padding: 10px 20px;
-        background-color: #007BFF;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-      button:hover {
-        background-color: #0056b3;
-      }
-      .result {
-        margin-top: 20px;
-        padding: 10px;
-        background-color: #f9f9f9;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <h1>챕터별 발표자 할당</h1>
-      <label for="presenters">발표자를 입력하세요 (쉼표로 구분):</label>
-      <input type="text" id="presenters" placeholder="예: Alice, Bob, Charlie" value="민호,이쿠맨,도키,띤자,란초,디제로,너구리,륜곰"/>
-      
-      <label for="chapters">챕터들를 입력하세요 (쉼표로 구분):</label>
-      <input type="text" id="chapters" placeholder="예: cX.Y~A.B 또는 챕터X.Y~A.B" value="챕터5.1~5.5,챕터6.1~6.4"/>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    select {
+      width: 100%;
+      height: 150px;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>챕터별 발표자 할당</h1>
 
-      <button onclick="assignPresenters()">할당하기</button>
-      <div class="result" id="result">
-        <!-- result will be showed here -->
-      </div>
+    <!-- 발표자 선택 리스트 -->
+    <label for="presenters">발표자를 선택하세요 (다중 선택 가능):</label>
+    <select id="presenters" multiple>
+      <option value="민호" selected>민호</option>
+      <option value="이쿠맨" selected>이쿠맨</option>
+      <option value="도키" selected>도키</option>
+      <option value="띤자" selected>띤자</option>
+      <option value="란초" selected>란초</option>
+      <option value="디제로" selected>디제로</option>
+      <option value="너구리" selected>너구리</option>
+      <option value="륜곰" selected>륜곰</option>
+    </select>
+
+    <label for="chapters">챕터 목록 (쉼표로 구분):</label>
+    <input type="text" id="chapters" placeholder="예: 챕터5.1~5.5, 챕터6.1~6.4" value="챕터5.1~5.5,챕터6.1~6.4"/>
+
+    <button onclick="assignPresenters()">할당하기</button>
+
+    <div class="result" id="result">
+      <!-- 할당 결과 표시 -->
     </div>
-    <script>
-      function parseChapters(input) {
-          const result = [];
-          const parts = input.split(',').map(part => part.trim()).filter(s => s.length > 0);
-      
-          parts.forEach(part => {
-              // "cX.Y~A.B" 또는 "챕터X.Y~A.B" 패턴 찾기
-              const rangeMatch = part.match(/(?:c|챕터)?(\d+)\.(\d+)~(\d+)\.(\d+)/);
-              // "cX.Y" 또는 "챕터X.Y" 단일 챕터 찾기
-              const singleMatch = part.match(/(?:c|챕터)?(\d+)\.(\d+)/);
-      
-              if (rangeMatch) {
-                  let startMajor = parseInt(rangeMatch[1], 10);
-                  let startMinor = parseInt(rangeMatch[2], 10);
-                  let endMajor = startMajor; // 범위에서 챕터 번호가 하나만 나오는 경우 처리
-                  let endMinor = parseInt(rangeMatch[4], 10);
-      
-                  for (let minor = startMinor; minor <= endMinor; minor++) {
-                      result.push(`챕터${startMajor}.${minor}`);
-                  }
-              } else if (singleMatch) {
-                  let major = parseInt(singleMatch[1], 10);
-                  let minor = parseInt(singleMatch[2], 10);
-                  result.push(`챕터${major}.${minor}`);
-              }
-          });
-      
-          return result;
+  </div>
+
+  <script>
+    function parseChapters(input) {
+      const result = [];
+      const parts = input.split(',').map(part => part.trim()).filter(s => s.length > 0);
+
+      parts.forEach(part => {
+        const rangeMatch = part.match(/(?:c|챕터)?(\d+)\.(\d+)~(\d+)\.(\d+)/);
+        const singleMatch = part.match(/(?:c|챕터)?(\d+)\.(\d+)/);
+
+        if (rangeMatch) {
+          let startMajor = parseInt(rangeMatch[1], 10);
+          let startMinor = parseInt(rangeMatch[2], 10);
+          let endMinor = parseInt(rangeMatch[4], 10);
+
+          for (let minor = startMinor; minor <= endMinor; minor++) {
+            result.push(`챕터${startMajor}.${minor}`);
+          }
+        } else if (singleMatch) {
+          let major = parseInt(singleMatch[1], 10);
+          let minor = parseInt(singleMatch[2], 10);
+          result.push(`챕터${major}.${minor}`);
+        }
+      });
+
+      return result;
+    }
+
+    function assignPresenters() {
+      const selectedOptions = document.querySelectorAll('#presenters option:checked');
+      const presenters = Array.from(selectedOptions).map(option => option.value);
+      const chaptersInput = document.getElementById('chapters').value.trim();
+      const chapters = parseChapters(chaptersInput);
+      const resultDiv = document.getElementById('result');
+
+      if (presenters.length === 0) {
+        resultDiv.innerHTML = '<p style="color: red;">❌ 오류: 발표자를 선택하세요.</p>';
+        return;
+      }
+      if (chapters.length === 0) {
+        resultDiv.innerHTML = '<p style="color: red;">❌ 오류: 할당할 챕터가 없습니다.</p>';
+        return;
       }
 
-      function assignPresenters() {
-        const presentersInput = document.getElementById('presenters').value.trim();
-        const chaptersInput = document.getElementById('chapters').value.trim();        
-        const presenters = presentersInput.split(',').map(s => s.trim()).filter(s => s.length > 0);
-        const chapters = parseChapters(chaptersInput);
-        const resultDiv = document.getElementById('result');
-        if (presenters.length === 0) {
-          resultDiv.innerHTML = '<p style="color: red;"> 오류: 발표자 리스트가 비어 있습니다.</p>';
-          return;
-        }
-        if (chapters.length === 0) {
-          resultDiv.innerHTML = '<p style="color: red;"> 오류: 할당할 챕터가 비어 있습니다.</p>';
-          return;
-        }
-        const originalChapters = chapters.slice();
-        suffleArray(presenters);
-        suffleArray(chapters);
-        const assignments = {};
-        for (let i = 0; i < chapters.length; i++) {
-          const presentersIndex = i % presenters.length;
-          assignments[chapters[i]] = presenters[presentersIndex];
-        }
-        let resultHTML = '<h2>챕터별 발표자 할당 결과</h2>';
-        for (const chapter of originalChapters) {
-          resultHTML += `<p>${chapter} -> ${assignments[chapter]}</p>`;
-        }
-        resultDiv.innerHTML = resultHTML;
+      suffleArray(presenters);
+      suffleArray(chapters);
+
+      const assignments = {};
+      for (let i = 0; i < chapters.length; i++) {
+        const presenterIndex = i % presenters.length;
+        assignments[chapters[i]] = presenters[presenterIndex];
       }
 
-      function suffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() *  (i + 1));
-          [array[i], array[j]] = [array[j], array[i]];
-        }
+      let resultHTML = '<h2>📌 챕터별 발표자 할당 결과</h2>';
+      for (const chapter of chapters) {
+        resultHTML += `<p>✅ ${chapter} → <b>${assignments[chapter]}</b></p>`;
       }
-    </script>
-  </body>
+      resultDiv.innerHTML = resultHTML;
+    }
+
+    function suffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+  </script>
+</body>
 </html>
