@@ -31,7 +31,7 @@
       } = MaterialUI;
       function App() {
         const [presentersInput, setPresentersInput] = React.useState('민호,이쿠맨,도키,띤자,란초,디제로,너구리,륜곰');
-        const [chaptersInput, setChaptersInput] = React.useState('');
+        const [chaptersInput, setChaptersInput] = React.useState('챕터5.1~5.5,챕터6.1~6.4');
         const [assignments, setAssignments] = React.useState({});
         const [errorMessage, setErrorMessage] = React.useState('');
 
@@ -41,14 +41,42 @@
             [array[i], array[j]] = [array[j], array[i]];
           }
         };
-
+        const parseChapters(input) {
+            const result = [];
+            const parts = input.split(',').map(part => part.trim()).filter(s => s.length > 0);
+        
+            parts.forEach(part => {
+                // "cX.Y~A.B" 또는 "챕터X.Y~A.B" 패턴 찾기
+                const rangeMatch = part.match(/(?:c|챕터)?(\d+)\.(\d+)~(\d+)\.(\d+)/);
+                // "cX.Y" 또는 "챕터X.Y" 단일 챕터 찾기
+                const singleMatch = part.match(/(?:c|챕터)?(\d+)\.(\d+)/);
+        
+                if (rangeMatch) {
+                    let startMajor = parseInt(rangeMatch[1], 10);
+                    let startMinor = parseInt(rangeMatch[2], 10);
+                    let endMajor = startMajor; // 범위에서 챕터 번호가 하나만 나오는 경우 처리
+                    let endMinor = parseInt(rangeMatch[4], 10);
+        
+                    for (let minor = startMinor; minor <= endMinor; minor++) {
+                        result.push(`챕터${startMajor}.${minor}`);
+                    }
+                } else if (singleMatch) {
+                    let major = parseInt(singleMatch[1], 10);
+                    let minor = parseInt(singleMatch[2], 10);
+                    result.push(`챕터${major}.${minor}`);
+                }
+            });
+        
+            return result;
+        }
+        
         const assignPresenters = (e) => {
           e.preventDefault();
           setErrorMessage('');
           let presentersInputTrimmed = presentersInput.trim();
           let chaptersInputTrimmed = chaptersInput.trim();
           const presenters = presentersInputTrimmed.split(',').map(s => s.trim()).filter(s => s.length > 0);
-          const chapters = chaptersInputTrimmed.split(',').map(s => s.trim()).filter(s => s.length > 0);
+          const chapters = parseChapters(chaptersInputTrimmed);
           if (presenters.length === 0) {
             setErrorMessage('오류: 발표자 리스트가 비어 있습니다.');
             setAssignments({});
