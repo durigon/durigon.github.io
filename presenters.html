@@ -110,6 +110,7 @@
         return;
       }
 
+      const originalChapters = [...chapters];
       suffleArray(presenters);
       suffleArray(chapters);
 
@@ -120,7 +121,7 @@
       }
 
       let resultHTML = '<h2>📌 챕터별 발표자 할당 결과</h2>';
-      for (const chapter of chapters) {
+      for (const chapter of originalChapters) {
         resultHTML += `<p>✅ ${chapter} → <b>${assignments[chapter]}</b></p>`;
       }
       resultDiv.innerHTML = resultHTML;
